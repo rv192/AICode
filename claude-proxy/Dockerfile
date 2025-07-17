@@ -8,17 +8,18 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
 
 # 安装 uv
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+# 强制重新运行以避免缓存问题并安装 uv
+RUN echo "Installing uv to break cache" && curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.astral/bin:${PATH}"
 
 # 克隆 claude-code-proxy 仓库
 RUN git clone https://github.com/fuergaosi233/claude-code-proxy.git .
 
 # 使用 uv 安装依赖
-RUN /root/.astral/bin/uv sync
+RUN uv sync
 
 # 暴露代理端口
 EXPOSE 8082
 
 # 启动代理服务的命令
-CMD ["/root/.astral/bin/uv", "run", "claude-code-proxy"]
+CMD ["uv", "run", "claude-code-proxy"]
