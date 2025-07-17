@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  claude-proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: claude-code-proxy
+    ports:
+      - "${PROXY_PORT:-8082}:8082"
+    env_file:
+      - .env
+    environment:
+      - HOST=${HOST:-0.0.0.0}
+      - PROXY_PORT=${PROXY_PORT:-8082}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      - BIG_MODEL=${BIG_MODEL:-gpt-4-turbo}
+      - SMALL_MODEL=${SMALL_MODEL:-gpt-3.5-turbo}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - MAX_TOKENS_LIMIT=${MAX_TOKENS_LIMIT:-4096}
+      - MIN_TOKENS_LIMIT=${MIN_TOKENS_LIMIT:-1024}
+      - REQUEST_TIMEOUT=${REQUEST_TIMEOUT:-120}
+      - MAX_RETRIES=${MAX_RETRIES:-3}
+      - PROXY_API_KEY=${PROXY_API_KEY}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
