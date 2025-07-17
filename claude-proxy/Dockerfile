@@ -8,8 +8,8 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
 
 # 安装 uv
-# 强制重新运行以避免缓存问题并安装 uv
-RUN echo "Installing uv to break cache" && curl -LsSf https://astral.sh/uv/install.sh | sh
+# 强制使用 HTTP/1.1 协议安装 uv 以解决网络问题
+RUN echo "Installing uv with HTTP/1.1" && curl --http1.1 -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.astral/bin:${PATH}"
 
 # 克隆 claude-code-proxy 仓库
