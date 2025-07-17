@@ -15,10 +15,10 @@ ENV PATH="/root/.astral/bin:${PATH}"
 RUN git clone https://github.com/fuergaosi233/claude-code-proxy.git .
 
 # 使用 uv 安装依赖
-RUN uv sync
+RUN /root/.astral/bin/uv sync
 
 # 暴露代理端口
 EXPOSE 8082
 
 # 启动代理服务的命令
-CMD ["uv", "run", "claude-code-proxy"]
+CMD ["/root/.astral/bin/uv", "run", "claude-code-proxy"]
