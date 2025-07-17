@@ -4,22 +4,34 @@ FROM python:3.11-slim
 # 设置工作目录
 WORKDIR /app
 
-# 安装 git 和 curl (用于安装 uv)
-RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
+# 安装系统依赖
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# 安装 uv
-# 强制使用 HTTP/1.1 协议安装 uv 以解决网络问题
-RUN echo "Installing uv with HTTP/1.1" && curl --http1.1 -LsSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/root/.astral/bin:${PATH}"
+# 安装 uv (使用官方推荐的方法)
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# 添加 uv 到 PATH (检查多个可能的安装位置)
+ENV PATH="/root/.cargo/bin:/root/.local/bin:${PATH}"
 
 # 克隆 claude-code-proxy 仓库
 RUN git clone https://github.com/fuergaosi233/claude-code-proxy.git .
 
-# 使用 uv 安装依赖
-RUN uv sync
+# 验证 uv 安装并显示版本
+RUN /root/.cargo/bin/uv --version || /root/.local/bin/uv --version || which uv
+
+# 使用完整路径安装依赖
+RUN /root/.cargo/bin/uv sync || /root/.local/bin/uv sync
+
+# 复制启动脚本
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
 
 # 暴露代理端口
 EXPOSE 8082
 
 # 启动代理服务的命令
-CMD ["uv", "run", "claude-code-proxy"]
+CMD ["/app/start.sh"]
