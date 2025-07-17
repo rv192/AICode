@@ -36,7 +36,7 @@
 #### 1. 克隆项目
 
 ```bash
-git clone https://github.com/sylearn/AICode.git
+git clone https://github.com/rv192/AICode.git
 cd AICode
 ```
 

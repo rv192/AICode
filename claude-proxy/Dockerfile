@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
 
 # 安装 uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/root/.cargo/bin:${PATH}"
+ENV PATH="/root/.astral/bin:${PATH}"
 
 # 克隆 claude-code-proxy 仓库
 RUN git clone https://github.com/fuergaosi233/claude-code-proxy.git .
